@@ -97,8 +97,9 @@ class ManageData(object):
         print(len(self.test))
 
     def save_data(self):
-        torch.save({ 'x1': self.x1_train, 'x2': self.x2_train, 'target': self.target_train }, 'train.pth.tar')
-        torch.save({ 'x1': self.x1_test, 'x2': self.x2_test, 'target': self.target_test }, 'test.pth.tar')
+        base_path = '/mnt/nas2/GrimaRepo/jahurtado/dataset/WSDM/'
+        torch.save({ 'x1': self.x1_train, 'x2': self.x2_train, 'target': self.target_train }, base_path + 'train.pth.tar')
+        torch.save({ 'x1': self.x1_test, 'x2': self.x2_test, 'target': self.target_test }, base_path + 'test.pth.tar')
 
     def getVectors(self):
         i = 0
