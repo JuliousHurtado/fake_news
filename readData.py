@@ -55,7 +55,7 @@ class Features(object):
         #print(tokens)
         # lemmatize
         vects = [ torch.from_numpy(tok.vector) for tok in tokens if not tok.is_stop ]
-        return torch.stack(vects).to(device)
+        return torch.stack(vects)
 
 class ManageData(object):
     """docstring for ManageData"""
@@ -79,6 +79,7 @@ class ManageData(object):
         self.splitData()
         #self.countLabels()
         self.getVectors()
+        self.save_data()
 
     def readFile(self, file):
         return pd.read_csv(os.path.join(self.path,file))
@@ -94,6 +95,10 @@ class ManageData(object):
 
         print(len(self.train))
         print(len(self.test))
+
+    def save_data(self):
+        torch.save({ 'x1': self.x1_train, 'x2': self.x2_train, 'target': self.target_train }, 'train.pth.tar')
+        torch.save({ 'x1': self.x1_test, 'x2': self.x2_test, 'target': self.target_test }, 'test.pth.tar')
 
     def getVectors(self):
         i = 0
