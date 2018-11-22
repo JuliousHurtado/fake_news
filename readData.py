@@ -20,6 +20,26 @@ title1_en - the fake news title 1 in English.
 title2_en - the news title 2 in English.
 label - indicates the relation between the news pair: agreed/disagreed/unrelated.
 """
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r')
+    # Print New Line on Complete
+    if iteration == total: 
+        print()
+
 class Features(object):
     """docstring for Features"""
     def __init__(self):
@@ -35,7 +55,7 @@ class Features(object):
         #print(tokens)
         # lemmatize
         vects = [ torch.from_numpy(tok.vector) for tok in tokens if not tok.is_stop ]
-        return torch.stack(vects)
+        return torch.stack(vects).to(device)
 
 class ManageData(object):
     """docstring for ManageData"""
@@ -43,9 +63,13 @@ class ManageData(object):
         super(ManageData, self).__init__()
         self.path = path
 
-        self.x1 = []
-        self.x2 = []
-        self.target = []
+        self.x1_train = []
+        self.x2_train = []
+        self.target_train = []
+
+        self.x1_test = []
+        self.x2_test = []
+        self.target_test = []
 
         self.features = Features()
         
@@ -72,23 +96,33 @@ class ManageData(object):
         print(len(self.test))
 
     def getVectors(self):
+        i = 0
+        print("Loading Train")
         for elem1,elem2,target in zip(self.train.title1_en, self.train.title2_en, self.train.label): 
             vect1 = self.features.tokenizeText(elem1)
             vect2 = self.features.tokenizeText(elem2)
 
-            self.x1.append(vect1)
-            self.x2.append(vect2)
+            self.x1_train.append(vect1)
+            self.x2_train.append(vect2)
 
-            self.target.append(self.defineTarget(target))
+            self.target_train.append(self.defineTarget(target))
 
+            printProgressBar(i, len(self.train), prefix = 'Progress:', suffix = 'Complete', length = 50)
+            i += 1
+
+        i = 0
+        print("Loading Test")
         for elem1,elem2,target in zip(self.test.title1_en, self.test.title2_en, self.test.label): 
             vect1 = self.features.tokenizeText(elem1)
             vect2 = self.features.tokenizeText(elem2)
 
-            self.x1.append(vect1)
-            self.x2.append(vect2)
+            self.x1_test.append(vect1)
+            self.x2_test.append(vect2)
 
-            self.target.append(self.defineTarget(target))
+            self.target_test.append(self.defineTarget(target))
+
+            printProgressBar(i, len(self.test), prefix = 'Progress:', suffix = 'Complete', length = 50)
+            i += 1
 
     def defineTarget(self, label):
         if label == 'agreed':
@@ -111,9 +145,13 @@ class ManageData(object):
         print(len(set(text.split())))
         #print(len(set(text2.split())))
 
-    def getData(self):
-        for i,elem in enumerate(self.x1):
-            yield elem, self.x2[i],self.target[i]
+    def getData(self, train = True):
+        if train:
+            for i,elem in enumerate(self.x1_train):
+                yield elem, self.x2_train[i],self.target_train[i]
+        else:
+            for i,elem in enumerate(self.x1_test):
+                yield elem, self.x2_test[i],self.target_test[i]
 
     def getDataTrain(self):
         for elem1,elem2,target in zip(self.train.title1_en, self.train.title2_en, self.train.label): 

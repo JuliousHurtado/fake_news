@@ -48,7 +48,7 @@ def train(net, data, criterion, optimizer):
     total_data = len(data.train)
     total_loss = 0
     i = 0
-    for x1,x2,target in data.getDataTrain():
+    for x1,x2,target in data.getData():#data.getDataTrain():
 
         printProgressBar(i, total_data, prefix = 'Progress:', suffix = 'Complete', length = 50)
 
@@ -73,7 +73,7 @@ def test(data, net):
     correct = 0
     total = 0
     with torch.no_grad():
-        for x1,x2,target in data.getDataTest():
+        for x1,x2,target in data.getData(False):#data.getDataTest():
             
             x1 = x1.to(device)
             x2 = x2.to(device)
