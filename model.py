@@ -4,8 +4,8 @@ import math
 import time
 import random
 
-torch.manual_seed(1234)
-torch.cuda.manual_seed(1234)
+#torch.manual_seed(1234)
+#torch.cuda.manual_seed(1234)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

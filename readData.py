@@ -54,7 +54,7 @@ class ManageData(object):
 
         self.splitData()
         #self.countLabels()
-        #self.getVectors()
+        self.getVectors()
 
     def readFile(self, file):
         return pd.read_csv(os.path.join(self.path,file))
@@ -73,6 +73,15 @@ class ManageData(object):
 
     def getVectors(self):
         for elem1,elem2,target in zip(self.train.title1_en, self.train.title2_en, self.train.label): 
+            vect1 = self.features.tokenizeText(elem1)
+            vect2 = self.features.tokenizeText(elem2)
+
+            self.x1.append(vect1)
+            self.x2.append(vect2)
+
+            self.target.append(self.defineTarget(target))
+
+        for elem1,elem2,target in zip(self.test.title1_en, self.test.title2_en, self.test.label): 
             vect1 = self.features.tokenizeText(elem1)
             vect2 = self.features.tokenizeText(elem2)
 
