@@ -176,18 +176,18 @@ class ManageData(object):
             for i,elem in enumerate(self.x1_train):
 
                 if type(elem) == list:
-                    elem = torch.zeros(300) 
+                    elem = torch.zeros(1,300) 
                 if type(self.x2_train[i]) == list:
-                    self.x2_train[i] = torch.zeros(300) 
+                    self.x2_train[i] = torch.zeros(1,300) 
 
                 yield elem, self.x2_train[i],self.target_train[i]
         else:
             for i,elem in enumerate(self.x1_test):
                 if type(elem) == list:
-                    elem = torch.zeros(300) 
+                    elem = torch.zeros(1,300) 
                 if type(self.x2_test[i]) == list:
-                    self.x2_test[i] = torch.zeros(300) 
-                    
+                    self.x2_test[i] = torch.zeros(1,300) 
+
                 yield elem, self.x2_test[i],self.target_test[i]
 
     def getDataTrain(self):
