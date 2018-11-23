@@ -138,7 +138,7 @@ def main(args):
         if iter % print_every == 0:
             print('%d %d%% (%s) %.4f' % (iter, iter / n_iters * 100, timeSince(start), loss))
 
-    finalTest(data, net)
+        finalTest(data, net)
 
 def getArgsCommand():
     parser = argparse.ArgumentParser()
