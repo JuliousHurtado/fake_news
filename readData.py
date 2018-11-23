@@ -75,13 +75,17 @@ class ManageData(object):
 
         self.features = Features()
         
-        self.train_c = self.readFile('train.csv')
         self.test_final = self.readFile('test.csv')
 
+        """
+        self.train_c = self.readFile('train.csv')
         self.splitData()
         #self.countLabels()
         self.getVectors()
         self.save_data()
+        """
+
+        self.load_Data()
 
     def readFile(self, file):
         return pd.read_csv(os.path.join(self.path,file))
@@ -102,6 +106,20 @@ class ManageData(object):
         base_path = '/mnt/nas2/GrimaRepo/jahurtado/dataset/WSDM/'
         torch.save({ 'x1': self.x1_train, 'x2': self.x2_train, 'target': self.target_train }, base_path + 'train.pth.tar')
         torch.save({ 'x1': self.x1_test, 'x2': self.x2_test, 'target': self.target_test }, base_path + 'test.pth.tar')
+
+    def load_Data(self):
+        base_path = '/mnt/nas2/GrimaRepo/jahurtado/dataset/WSDM/'
+
+        checkpoint = torch.load(base_path + 'train.pth.tar')
+        self.x1_train = checkpoint['x1']
+        self.x2_train = checkpoint['x2']
+        self.target_train = checkpoint['target']
+
+        checkpoint = torch.load(base_path + 'test.pth.tar')
+        self.x1_test = checkpoint['x1']
+        self.x2_test = checkpoint['x2']
+        self.target_test = checkpoint['target']
+
 
     def getVectors(self):
         i = 0
