@@ -57,7 +57,7 @@ class Features(object):
         vects = [ torch.from_numpy(tok.vector) for tok in tokens if not tok.is_stop ]
         if len(vects) > 0:
             return torch.stack(vects)
-        return None
+        return []
 
 class ManageData(object):
     """docstring for ManageData"""
@@ -128,10 +128,8 @@ class ManageData(object):
             vect1 = self.features.tokenizeText(elem1)
             vect2 = self.features.tokenizeText(elem2)
 
-            if vect1 is not None:
-                self.x1_train.append(vect1)
-            if vect2 is not None:
-                self.x2_train.append(vect2)
+            self.x1_train.append(vect1)
+            self.x2_train.append(vect2)
 
             self.target_train.append(self.defineTarget(target))
 

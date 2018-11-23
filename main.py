@@ -45,7 +45,7 @@ def adjust_learning_rate(optimizer, epoch, init_lr):
         param_group['lr'] = lr
 
 def train(net, data, criterion, optimizer):
-    total_data = len(data.train)
+    total_data = len(data.x1_train)
     total_loss = 0
     i = 0
     for x1,x2,target in data.getData():#data.getDataTrain():
@@ -109,8 +109,8 @@ def finalTest(data, net):
             f.write(str(t_id) + ',' + label + '\n')
 
 def main(args):
-    n_iters = 200
-    print_every = 10
+    n_iters = 50
+    print_every = 5
     learning_rate = 0.005 # If you set this too high, it might explode. If too low, it might not learn
 
     data = ManageData(args['path'])
