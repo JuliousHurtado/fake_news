@@ -105,7 +105,7 @@ class ManageData(object):
         #torch.save({ 'x1': self.x1_train, 'x2': self.x2_train, 'target': self.target_train }, base_path + 'train.pth.tar')
         #torch.save({ 'x1': self.x1_test, 'x2': self.x2_test, 'target': self.target_test }, base_path + 'test.pth.tar')
 
-        torch.save({ 'x1': self.x1_test, 'x2': self.x2_test, 'target': self.target_test }, base_path + 'test_final.pth.tar')
+        torch.save({ 'x1': self.x1_test, 'x2': self.x2_test }, base_path + 'test_final.pth.tar')
 
     def load_Data(self):
         base_path = '/mnt/nas2/GrimaRepo/jahurtado/dataset/WSDM/'
@@ -152,14 +152,12 @@ class ManageData(object):
             i += 1
         """
         print("Loading Test")
-        for elem1,elem2,target in zip(self.test_final.title1_en, self.test_final.title2_en, self.test_final.label): 
+        for elem1,elem2 in zip(self.test_final.title1_en, self.test_final.title2_en): 
             vect1 = self.features.tokenizeText(elem1)
             vect2 = self.features.tokenizeText(elem2)
 
             self.x1_test.append(vect1)
             self.x2_test.append(vect2)
-
-            self.target_test.append(self.defineTarget(target))
 
             printProgressBar(i, len(self.test_final), prefix = 'Progress:', suffix = 'Complete', length = 50)
             i += 1
