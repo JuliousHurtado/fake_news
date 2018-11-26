@@ -99,12 +99,13 @@ def finalTest(data, net):
             x2 = x2.to(device)
 
             outputs = net(x1, x2)
+            _, predicted = torch.max(outputs.data, 1)
 
-            if outputs.item() == 0:
+            if predicted.item() == 0:
                 label = 'agreed'
-            if outputs.item() == 1:
+            if predicted.item() == 1:
                 label = 'disagreed'
-            if outputs.item() == 2:
+            if predicted.item() == 2:
                 label = 'unrelated'
             f.write(str(t_id) + ',' + label + '\n')
 
