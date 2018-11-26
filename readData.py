@@ -77,15 +77,13 @@ class ManageData(object):
         
         self.test_final = self.readFile('test.csv')
 
-        """
-        self.train_c = self.readFile('train.csv')
-        self.splitData()
+        #self.train_c = self.readFile('train.csv')
+        #self.splitData()
         #self.countLabels()
         self.getVectors()
         self.save_data()
-        """
 
-        self.load_Data()
+        #self.load_Data()
 
     def readFile(self, file):
         return pd.read_csv(os.path.join(self.path,file))
@@ -104,8 +102,10 @@ class ManageData(object):
 
     def save_data(self):
         base_path = '/mnt/nas2/GrimaRepo/jahurtado/dataset/WSDM/'
-        torch.save({ 'x1': self.x1_train, 'x2': self.x2_train, 'target': self.target_train }, base_path + 'train.pth.tar')
-        torch.save({ 'x1': self.x1_test, 'x2': self.x2_test, 'target': self.target_test }, base_path + 'test.pth.tar')
+        #torch.save({ 'x1': self.x1_train, 'x2': self.x2_train, 'target': self.target_train }, base_path + 'train.pth.tar')
+        #torch.save({ 'x1': self.x1_test, 'x2': self.x2_test, 'target': self.target_test }, base_path + 'test.pth.tar')
+
+        torch.save({ 'x1': self.x1_test, 'x2': self.x2_test, 'target': self.target_test }, base_path + 'test_final.pth.tar')
 
     def load_Data(self):
         base_path = '/mnt/nas2/GrimaRepo/jahurtado/dataset/WSDM/'
@@ -123,6 +123,7 @@ class ManageData(object):
 
     def getVectors(self):
         i = 0
+        """
         print("Loading Train")
         for elem1,elem2,target in zip(self.train.title1_en, self.train.title2_en, self.train.label): 
             vect1 = self.features.tokenizeText(elem1)
@@ -149,6 +150,19 @@ class ManageData(object):
 
             printProgressBar(i, len(self.test), prefix = 'Progress:', suffix = 'Complete', length = 50)
             i += 1
+        """
+        print("Loading Test")
+        for elem1,elem2,target in zip(self.test_final.title1_en, self.test_final.title2_en, self.test_final.label): 
+            vect1 = self.features.tokenizeText(elem1)
+            vect2 = self.features.tokenizeText(elem2)
+
+            self.x1_test.append(vect1)
+            self.x2_test.append(vect2)
+
+            self.target_test.append(self.defineTarget(target))
+
+            printProgressBar(i, len(self.test_final), prefix = 'Progress:', suffix = 'Complete', length = 50)
+            i += 1
 
     def defineTarget(self, label):
         if label == 'agreed':
@@ -171,7 +185,7 @@ class ManageData(object):
         print(len(set(text.split())))
         #print(len(set(text2.split())))
 
-    def getData(self, train = True):
+    def getData(self, train = True, final = False):
         if train:
             for i,elem in enumerate(self.x1_train):
 
@@ -181,7 +195,7 @@ class ManageData(object):
                     self.x2_train[i] = torch.zeros(1,300) 
 
                 yield elem, self.x2_train[i],self.target_train[i]
-        else:
+        elif final:
             for i,elem in enumerate(self.x1_test):
                 if type(elem) == list:
                     elem = torch.zeros(1,300) 
@@ -189,6 +203,14 @@ class ManageData(object):
                     self.x2_test[i] = torch.zeros(1,300) 
 
                 yield elem, self.x2_test[i],self.target_test[i]
+        else:
+            for i,elem in enumerate(self.x1_test_final):
+                if type(elem) == list:
+                    elem = torch.zeros(1,300) 
+                if type(self.x2_test_final[i]) == list:
+                    self.x2_test_final[i] = torch.zeros(1,300) 
+
+                yield elem, self.x2_test_final[i],self.target_test_final[i]
 
     def getDataTrain(self):
         for elem1,elem2,target in zip(self.train.title1_en, self.train.title2_en, self.train.label): 
