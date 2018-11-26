@@ -94,7 +94,7 @@ def finalTest(data, net):
     f = open("results.csv", "w")
     f.write("Id,Category\n")
     with torch.no_grad():
-        for x1,x2,t_id in data.getDataTestFinal():
+        for x1,x2 in data.getData(False, True):
             x1 = x1.to(device)
             x2 = x2.to(device)
 
