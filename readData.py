@@ -188,7 +188,7 @@ class ManageData(object):
 
         print(len(set(text.split())))
 
-    def getData(self, train = True, final = False):
+    def getData(self, train = True, test = True):
         if train:
             for i,elem in enumerate(self.x1_train):
 
@@ -198,7 +198,7 @@ class ManageData(object):
                     self.x2_train[i] = torch.zeros(1,300) 
 
                 yield elem, self.x2_train[i],self.target_train[i]
-        elif final:
+        elif test:
             for i,elem in enumerate(self.x1_test):
                 if type(elem) == list:
                     elem = torch.zeros(1,300) 
