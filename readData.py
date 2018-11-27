@@ -75,6 +75,7 @@ class ManageData(object):
 
         self.x1_test_final = []
         self.x2_test_final = []
+        self.id_test_final = []
 
         self.features = Features()
         
@@ -83,10 +84,10 @@ class ManageData(object):
         #self.train_c = self.readFile('train.csv')
         #self.splitData()
         #self.countLabels()
-        #self.getVectors()
-        #self.save_data()
+        self.getVectors()
+        self.save_data()
 
-        self.load_Data()
+        #self.load_Data()
 
     def readFile(self, file):
         return pd.read_csv(os.path.join(self.path,file))
@@ -105,10 +106,10 @@ class ManageData(object):
 
     def save_data(self):
         base_path = '/mnt/nas2/GrimaRepo/jahurtado/dataset/WSDM/'
-        torch.save({ 'x1': self.x1_train, 'x2': self.x2_train, 'target': self.target_train }, base_path + 'train.pth.tar')
-        torch.save({ 'x1': self.x1_test, 'x2': self.x2_test, 'target': self.target_test }, base_path + 'test.pth.tar')
+        #torch.save({ 'x1': self.x1_train, 'x2': self.x2_train, 'target': self.target_train }, base_path + 'train.pth.tar')
+        #torch.save({ 'x1': self.x1_test, 'x2': self.x2_test, 'target': self.target_test }, base_path + 'test.pth.tar')
 
-        torch.save({ 'x1': self.x1_test_final, 'x2': self.x2_test_final }, base_path + 'test_final.pth.tar')
+        torch.save({ 'x1': self.x1_test_final, 'x2': self.x2_test_final, 'id': self.id_test_final }, base_path + 'test_final.pth.tar')
 
     def load_Data(self):
         base_path = '/mnt/nas2/GrimaRepo/jahurtado/dataset/WSDM/'
@@ -126,10 +127,11 @@ class ManageData(object):
         checkpoint = torch.load(base_path + 'test_final.pth.tar')
         self.x1_test_final = checkpoint['x1']
         self.x2_test_final = checkpoint['x2']
+        self.id_test_final = checkpoint['id']
 
     def getVectors(self):
         i = 0
-
+        """
         print("Loading Train")
         for elem1,elem2,target in zip(self.train.title1_en, self.train.title2_en, self.train.label): 
             vect1 = self.features.tokenizeText(elem1)
@@ -156,14 +158,15 @@ class ManageData(object):
 
             printProgressBar(i, len(self.test), prefix = 'Progress:', suffix = 'Complete', length = 50)
             i += 1
-
+        """
         print("Loading Test Final")
-        for elem1,elem2 in zip(self.test_final.title1_en, self.test_final.title2_en): 
+        for elem1,elem2,t_id in zip(self.test_final.title1_en, self.test_final.title2_en, self.test_final.id): 
             vect1 = self.features.tokenizeText(elem1)
             vect2 = self.features.tokenizeText(elem2)
 
             self.x1_test_final.append(vect1)
             self.x2_test_final.append(vect2)
+            self.id_test_final.append(t_id)
 
             printProgressBar(i, len(self.test_final), prefix = 'Progress:', suffix = 'Complete', length = 50)
             i += 1
@@ -213,7 +216,7 @@ class ManageData(object):
                 if type(self.x2_test_final[i]) == list:
                     self.x2_test_final[i] = torch.zeros(1,300) 
 
-                yield elem, self.x2_test_final[i]
+                yield elem, self.x2_test_final[i], self.id_test_final[i]
 
     def getDataTrain(self):
         for elem1,elem2,target in zip(self.train.title1_en, self.train.title2_en, self.train.label): 
