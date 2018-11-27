@@ -67,6 +67,8 @@ def train(net, data, criterion, optimizer):
 
         i += 1
 
+        break
+
     return total_loss/total_data
 
 def test(data, net):
@@ -85,6 +87,8 @@ def test(data, net):
             total += target.size(0)
             correct += (predicted == target).sum().item()
 
+            break
+
     print('Accuracy in test: %d %%' % (
         100 * correct / total))
 
@@ -94,7 +98,7 @@ def finalTest(data, net):
     f = open("results.csv", "w")
     f.write("Id,Category\n")
     with torch.no_grad():
-        for x1,x2 in data.getData(False, False):
+        for x1,x2,t_id in data.getData(False, False):
             x1 = x1.to(device)
             x2 = x2.to(device)
 

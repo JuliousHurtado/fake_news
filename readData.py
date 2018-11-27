@@ -84,10 +84,10 @@ class ManageData(object):
         #self.train_c = self.readFile('train.csv')
         #self.splitData()
         #self.countLabels()
-        self.getVectors()
-        self.save_data()
+        #self.getVectors()
+        #self.save_data()
 
-        #self.load_Data()
+        self.load_Data()
 
     def readFile(self, file):
         return pd.read_csv(os.path.join(self.path,file))
@@ -131,7 +131,7 @@ class ManageData(object):
 
     def getVectors(self):
         i = 0
-        """
+
         print("Loading Train")
         for elem1,elem2,target in zip(self.train.title1_en, self.train.title2_en, self.train.label): 
             vect1 = self.features.tokenizeText(elem1)
@@ -158,7 +158,7 @@ class ManageData(object):
 
             printProgressBar(i, len(self.test), prefix = 'Progress:', suffix = 'Complete', length = 50)
             i += 1
-        """
+
         print("Loading Test Final")
         for elem1,elem2,t_id in zip(self.test_final.title1_en, self.test_final.title2_en, self.test_final.id): 
             vect1 = self.features.tokenizeText(elem1)
