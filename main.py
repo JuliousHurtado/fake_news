@@ -67,8 +67,7 @@ def train(net, data, criterion, optimizer):
 
         i += 1
 
-        break
-
+    print()
     return total_loss/total_data
 
 def test(data, net):
@@ -87,8 +86,6 @@ def test(data, net):
             total += target.size(0)
             correct += (predicted == target).sum().item()
 
-            break
-
     print('Accuracy in test: %d %%' % (
         100 * correct / total))
 
@@ -97,6 +94,9 @@ def test(data, net):
 def finalTest(data, net):
     f = open("results.csv", "w")
     f.write("Id,Category\n")
+
+    total_data = len(data.x1_test_final)
+    i = 0
     with torch.no_grad():
         for x1,x2,t_id in data.getData(False, False):
             x1 = x1.to(device)
@@ -112,6 +112,9 @@ def finalTest(data, net):
             if predicted.item() == 2:
                 label = 'unrelated'
             f.write(str(t_id) + ',' + label + '\n')
+
+            printProgressBar(i, total_data, prefix = 'Progress:', suffix = 'Complete', length = 50)
+            i += 1
 
 def main(args):
     n_iters = 50
@@ -143,7 +146,7 @@ def main(args):
         if iter % print_every == 0:
             print('%d %d%% (%s) %.4f' % (iter, iter / n_iters * 100, timeSince(start), loss))
 
-        finalTest(data, net)
+            finalTest(data, net)
 
 def getArgsCommand():
     parser = argparse.ArgumentParser()
