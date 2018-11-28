@@ -7,7 +7,7 @@ import torch
 from nltk.corpus import stopwords
 import string
 
-np.random.seed(1234)
+#np.random.seed(1234)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 """
@@ -97,9 +97,9 @@ class ManageData(object):
         print(self.test['label'].value_counts())
 
     def splitData(self):
-        msk = np.random.rand(len(self.train_c)) < 0.8
-        self.train = self.train_c[msk]
-        self.test = self.train_c[~msk]
+        msk = np.random.rand(len(self.train_c[:100])) < 0.8
+        self.train = self.train_c[:100][msk]
+        self.test = self.train_c[:100][~msk]
 
         print(len(self.train))
         print(len(self.test))

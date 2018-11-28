@@ -32,6 +32,8 @@ class Net(nn.Module):
     def __init__(self, n_hidden = 128, vect_dim = 300):
         super(Net, self).__init__()
 
+        self.multiHead = MultiHead()
+
         self.rnn1 = nn.GRUCell(vect_dim, n_hidden)
         self.rnn2 = nn.GRUCell(vect_dim, n_hidden)
 
@@ -43,6 +45,10 @@ class Net(nn.Module):
         self.softmax = nn.LogSoftmax(dim=1)
 
     def forward(self, x1, x2):
+
+        x1 = self.multiHead(x1)
+        x2 = self.multiHead(x2)
+
         output1 = self.initHidden()
         output2 = self.initHidden()
 
@@ -60,3 +66,59 @@ class Net(nn.Module):
 
     def initHidden(self):
         return torch.zeros(1, self.hidden_size).to(device)
+
+class SelfAttention(nn.Module):
+    def __init__(self, vect_dim = 300, n_hidden = 300, p_drop = 0.5):
+        super(SelfAttention, self).__init__()
+
+        self.vect_dim = torch.Tensor([vect_dim]).to(device)
+
+        self.q = nn.Linear(vect_dim, n_hidden)
+        self.k = nn.Linear(vect_dim, n_hidden)
+        self.v = nn.Linear(vect_dim, n_hidden)
+
+        self.softmax = nn.Softmax(dim = 1)
+        self.dropout = nn.Dropout(p_drop)
+        self.bn = nn.LayerNorm(n_hidden)
+
+    def forward(self, x):
+
+        q = self.q(x)
+        k = self.k(x)
+        v = self.v(x)
+
+        out = torch.matmul(q, k.t())
+        out = out / torch.sqrt(self.vect_dim)
+        out = self.softmax(out)
+        out = self.dropout(out)
+        out = torch.matmul(out, v)
+
+        out += x
+
+        out = self.bn(out)
+
+        return out
+
+class MultiHead(nn.Module):
+    def __init__(self, vect_dim = 300, n_hidden = 300, n_stack = 3, p_drop= 0.5):
+        super(MultiHead, self).__init__()
+
+        self.n_stack = n_stack
+
+        self.attention = SelfAttention()
+
+        self.w = nn.Linear(vect_dim, n_hidden)
+        self.dropout = nn.Dropout(p_drop)
+
+        self.layer_norm = nn.LayerNorm(vect_dim)
+
+    def forward(self, x):
+
+        output = x
+        for i in range(self.n_stack):
+            output = self.attention(output)
+
+            output = self.dropout(self.w(output))
+            output = self.layer_norm(output + x)
+
+        return output
