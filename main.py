@@ -48,7 +48,7 @@ def train(net, data, criterion, optimizer):
     total_data = len(data.x1_train)#len(data.train)
     total_loss = 0
     i = 0
-    model.train()
+    net.train()
     for x1,x2,target in data.getData():#data.getDataTrain():
 
         printProgressBar(i, total_data, prefix = 'Progress:', suffix = 'Complete', length = 50)
@@ -74,7 +74,7 @@ def train(net, data, criterion, optimizer):
 def test(data, net):
     correct = 0
     total = 0
-    model.eval()
+    net.eval()
     with torch.no_grad():
         for x1,x2,target in data.getData(False):#data.getDataTest():
             
@@ -97,7 +97,7 @@ def finalTest(data, net):
     f = open("results.csv", "w")
     f.write("Id,Category\n")
 
-    model.eval()
+    net.eval()
 
     total_data = len(data.x1_test_final)
     i = 0
