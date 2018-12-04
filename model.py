@@ -29,7 +29,7 @@ class RNN(nn.Module):
 
 
 class Net(nn.Module):
-    def __init__(self, n_hidden = 128, vect_dim = 300):
+    def __init__(self, n_hidden = 1024, vect_dim = 300):
         super(Net, self).__init__()
 
         self.multiHead = MultiHead()
